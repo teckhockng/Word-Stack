@@ -15,11 +15,13 @@
 
 package com.google.engedu.wordstack;
 
+import android.content.ClipData;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.helper.widget.Flow;
 import androidx.core.content.res.TypedArrayUtils;
 
 import android.os.Build;
@@ -28,11 +30,14 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.util.ArrayUtils;
+import com.google.android.material.internal.FlowLayout;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +48,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
     private StackedLayout stackedLayout;
     private String word1, word2;
+    private Stack<LetterTile> placedTiles;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +87,17 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
         }
         LinearLayout verticalLayout = (LinearLayout) findViewById(R.id.vertical_layout);
+
         stackedLayout = new StackedLayout(this);
+
         verticalLayout.addView(stackedLayout, 3);
 
         View word1LinearLayout = findViewById(R.id.word1);
         word1LinearLayout.setOnTouchListener(new TouchListener());
-        //word1LinearLayout.setOnDragListener(new DragListener());
+//        word1LinearLayout.setOnDragListener(new DragListener());
         View word2LinearLayout = findViewById(R.id.word2);
         word2LinearLayout.setOnTouchListener(new TouchListener());
-        //word2LinearLayout.setOnDragListener(new DragListener());
+//        word2LinearLayout.setOnDragListener(new DragListener());
     }
 
     private class TouchListener implements View.OnTouchListener {
@@ -95,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN && !stackedLayout.empty()) {
+                v.startDrag(ClipData.newPlainText("",""), new View.DragShadowBuilder(v), this, 0);
                 LetterTile tile = (LetterTile) stackedLayout.peek();
                 tile.moveToViewGroup((ViewGroup) v);
                 if (stackedLayout.empty()) {
@@ -106,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                  **  YOUR CODE GOES HERE
                  **
                  **/
+                placedTiles.push(tile);
+                System.out.println(placedTiles);
                 return true;
             }
             return false;
@@ -146,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                      **  YOUR CODE GOES HERE
                      **
                      **/
+                    ClipData.newPlainText(""," ");
                     return true;
             }
             return false;
@@ -154,6 +168,9 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean onStartGame(View view) {
+        stackedLayout.clear();
+        word1 = "";
+        word2 = "";
         TextView messageBox = (TextView) findViewById(R.id.message_box);
         messageBox.setText("Game started");
         /**
@@ -175,16 +192,19 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(wordone);
         System.out.println(wordtwo);
 
-        while(wordone.size()> 0){
-            int randnum = new Random().nextInt(wordone.size());
-            mixedString += wordone.get(randnum);
-            wordone.remove(randnum);
 
-            int randnum2 = new Random().nextInt(wordtwo.size());
-            mixedString += wordtwo.get(randnum2);
-            wordtwo.remove(randnum2);
+        while((wordone.size()> 0) | (wordtwo.size() > 0)){
+            int rand = new Random().nextInt(100);
+            if((rand > 50) & (wordone.size() > 0)) {
+                mixedString += wordone.get(0);
+                wordone.remove(0);
+            }
+            if((rand < 50) & (wordtwo.size() > 0)){
+                mixedString += wordtwo.get(0);
+                wordtwo.remove(0);
+            }
 
-            System.out.println(wordone.size());
+            System.out.println(wordtwo.size());
         }
 
         System.out.println(mixedString);
@@ -194,7 +214,8 @@ public class MainActivity extends AppCompatActivity {
 
         for (Character i:mixedStringChar) {
             LetterTile letterTile = new LetterTile(getApplicationContext(),i);
-            stackedLayout.addView(letterTile);
+            stackedLayout.push(letterTile);
+
         }
 
         return true;
@@ -206,6 +227,10 @@ public class MainActivity extends AppCompatActivity {
          **  YOUR CODE GOES HERE
          **
          **/
+        LetterTile tile = placedTiles.pop();
+        tile.moveToViewGroup(stackedLayout);
+
+
         return true;
     }
 }

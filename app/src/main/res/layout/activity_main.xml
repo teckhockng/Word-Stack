@@ -25,38 +25,40 @@
     tools:context="com.google.engedu.wordstack.MainActivity">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/vertical_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/vertical_layout">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/word1"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/message_box"
+            android:layout_margin="10dp"
+            android:background="#ffffff"
+            android:minHeight="60dp"
+            android:orientation="horizontal"
+            android:padding="10dp" />
+
+        <LinearLayout
+            android:id="@+id/word2"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/message_box"
+            android:layout_margin="10dp"
+            android:background="#ffffff"
+            android:minHeight="60dp"
+            android:orientation="horizontal"
+            android:padding="10dp" />
 
         <TextView
+            android:id="@+id/message_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            android:id="@+id/message_box" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/message_box"
-            android:minHeight="60dp"
-            android:layout_margin="10dp"
-            android:id="@+id/word1"
-            android:padding="10dp"
-            android:background="#ffffff"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/message_box"
-            android:minHeight="60dp"
-            android:layout_margin="10dp"
-            android:id="@+id/word2"
-            android:padding="10dp"
-            android:background="#ffffff" />
+            android:text="Hello World!" />
 
     </LinearLayout>
 
